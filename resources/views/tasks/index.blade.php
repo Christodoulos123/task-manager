@@ -17,6 +17,7 @@
                                 <th>Description</th>
                                 <th>Actions</th>
                                 <th>Status</th>
+                                <th>Assign Task</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -38,6 +39,20 @@
                                         @else
                                             Not Completed
                                         @endif
+                                    </td>
+                                    <td>
+                                        <form action="{{ route('tasks.assign-user', $task->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <select name="user_id" onchange="this.form.submit()" class="bg-gray-800 text-gray-200 border border-gray-700 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                                <option value="">Unassigned</option>
+                                                @foreach ($users as $user)
+                                                    <option value="{{ $user->id }}" {{ $task->user_id == $user->id ? 'selected' : '' }}>
+                                                        {{ $user->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
