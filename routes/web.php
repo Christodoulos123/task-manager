@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\AssignTaskController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,5 +20,10 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('tasks', TaskController::class);
+
+
+
+Route::put('/tasks/{task}/assign-user', AssignTaskController::class)->name('tasks.assign-user');
+
 
 require __DIR__.'/auth.php';
