@@ -13,7 +13,7 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Task::all();
-        return response()->json($tasks);
+        return view('tasks.index', compact('tasks'));
     }
 
     /**
@@ -21,7 +21,7 @@ class TaskController extends Controller
      */
     public function create()
     {
-        
+        return view('tasks.create');
     }
 
     /**
@@ -29,17 +29,12 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the incoming request
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
+        Task::create([
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
         ]);
-
-        // Create the task
-        $task = Task::create($validated);
-
-        // Return the newly created task with HTTP 201 (Created)
-        return response()->json($task, 201);
+ 
+        return redirect()->route('tasks.index');
     }
 
     /**
@@ -53,38 +48,32 @@ class TaskController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Task $task)
     {
-        //
+        return view('tasks.edit', compact('task'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Task $task)
     {
-        // Find the task by ID
-        $task = Task::findOrFail($id);
+    $task->update([
+        'title' => $request->input('title'),
+        'description' => $request->input('description'),
+        'completed' => $request->boolean('completed'),
+    ]);
 
-        // Update only the "completed" field
-        $task->update([
-            'completed' => true,
-        ]);
-
-        // Return the updated task
-        return response()->json([
-            'message' => 'Task marked as completed',
-            'task' => $task,
-        ]);
+    return redirect()->route('tasks.index'); 
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Task $task)
     {
-        $task = Task::findOrFail($id);
         $task->delete();
-        return response()->json(['message' => 'Task deleted successfully']);
+ 
+        return redirect()->route('tasks.index');
     }
 }
